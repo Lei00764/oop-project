@@ -2,17 +2,10 @@
 
 #include <iostream>
 
-struct Point
-{
-    int row;
-    int col;
-    Point() : row(-1), col(-1){};
-};
-
-void InsertPath(int i, int j, Point pre[9][9], int path[100][2], int &p)
+void Game::InsertPath(int i, int j, Point pre[9][9], int &p)
 {
     if (pre[i][j].row != -1)
-        InsertPath(pre[i][j].row, pre[i][j].col, pre, path, p);
+        InsertPath(pre[i][j].row, pre[i][j].col, pre, p);
     path[p][0] = i;
     path[p][1] = j;
     p++;
@@ -100,7 +93,7 @@ int Game::BFS()
     }
 
     int p = 0;
-    InsertPath(end_row, end_col, pre, path, p);
+    InsertPath(end_row, end_col, pre, p);
     return is_path;
 }
 
@@ -126,6 +119,24 @@ void Game::InitChessBoard()
         }
     }
     chess_board.PrintChessBoard();
+}
+
+/**
+ * @brief 返回棋盘中剩余棋子的数量
+ *
+ */
+int Game::GetBallNum()
+{
+    int ball_num = 0;
+    for (int i = 0; i < CHESSBOARD_ROWS; i++)
+    {
+        for (int j = 0; j < CHESSBOARD_COLS; j++)
+        {
+            if (chess_board.arr[i][j] != 0)
+                ball_num++;
+        }
+    }
+    return ball_num;
 }
 
 void Game::PlayGame()
@@ -165,8 +176,8 @@ void Game::PlayGame()
                       << "(" << end_row << ", " << end_col << ")" << std::endl;
         }
 
-        int per_score = IsDelete(); // 如果有5个及以上的话，会更改arr的值
-        if (per_score != 0)         // 说明本次移动完成了消球
+        int per_score = IsDelete(end_row, end_col); // 如果有5个及以上的话，会更改arr的值
+        if (per_score != 0)                         // 说明本次移动完成了消球
         {
             start_row = -1;
             start_col = -1;
@@ -182,6 +193,17 @@ void Game::PlayGame()
         }
         // 打印棋盘
         chess_board.PrintChessBoard();
+        int sum = GetBallNum(); // 棋盘中剩余棋子的数量
+        if (sum == 0)           // 棋盘中没有棋子了
+        {
+            std::cout << "胜利！！！" << std::endl;
+            break; // 游戏结束
+        }
+        else if (sum + 3 > CHESSBOARD_COLS * CHESSBOARD_ROWS)
+        {
+            std::cout << "失败！！！" << std::endl;
+            break; // 游戏结束
+        }
     }
 }
 
@@ -217,46 +239,46 @@ void Game::ShowMessage()
 }
 
 /**
- * 将球移到(end_row, end_col)后判断是否能够消除
+ * 将球移到(row, col)后判断是否能够消除
  * 如果可以，消除然后返回得分，如果不行返回0
  * 消除n个球，得 2 * n 分
  */
-int Game::IsDelete()
+int Game::IsDelete(int row, int col)
 {
     int n = 0;         // 统计每次消球的数量
     int per_score = 0; // 统计分数
-    int color = chess_board.arr[end_row][end_col];
+    int color = chess_board.arr[row][col];
     int sumy1 = 0; // 统计连续竖球的数量 该位置 + 向下
     int sumy2 = 0; // 统计连续竖球的数量 不包括 + 向上
     int sumx1 = 0; // 统计连续横球的数量 该位置 + 向右
     int sumx2 = 0; // 统计连续横球的数量 不包括 + 向左
                    // 先考虑竖
     // 向下
-    for (int i = end_row; i < CHESSBOARD_ROWS; i++)
+    for (int i = row; i < CHESSBOARD_ROWS; i++)
     {
-        if (chess_board.arr[i][end_col] == 0 || chess_board.arr[i][end_col] != color)
+        if (chess_board.arr[i][col] == 0 || chess_board.arr[i][col] != color)
             break;
         sumy1++;
     }
     // 向上
-    for (int i = end_row - 1; i >= 0; i--)
+    for (int i = row - 1; i >= 0; i--)
     {
-        if (chess_board.arr[i][end_col] == 0 || chess_board.arr[i][end_col] != color)
+        if (chess_board.arr[i][col] == 0 || chess_board.arr[i][col] != color)
             break;
         sumy2++;
     }
     // 考虑横
     // 向右
-    for (int i = end_col; i < CHESSBOARD_COLS; i++)
+    for (int i = col; i < CHESSBOARD_COLS; i++)
     {
-        if (chess_board.arr[end_row][i] == 0 || chess_board.arr[end_row][i] != color)
+        if (chess_board.arr[row][i] == 0 || chess_board.arr[row][i] != color)
             break;
         sumx1++;
     }
     // 向左
-    for (int i = end_col - 1; i >= 0; i--)
+    for (int i = col - 1; i >= 0; i--)
     {
-        if (chess_board.arr[end_row][i] == 0 || chess_board.arr[end_row][i] != color)
+        if (chess_board.arr[row][i] == 0 || chess_board.arr[row][i] != color)
             break;
         sumx2++;
     }
@@ -266,29 +288,29 @@ int Game::IsDelete()
     {
         n = sumy1 + sumy2 + sumx1 + sumx2 - 1;
         per_score = 2 * n;
-        delete_ball_num[chess_board.arr[end_row][end_col]] += n;
-        for (int i = end_row - sumy2; i < end_row + sumy1; i++)
-            chess_board.arr[i][end_col] = 0;
-        for (int i = end_col - sumx2; i < end_col + sumx1; i++)
-            chess_board.arr[end_row][i] = 0;
+        delete_ball_num[chess_board.arr[row][col]] += n;
+        for (int i = row - sumy2; i < row + sumy1; i++)
+            chess_board.arr[i][col] = 0;
+        for (int i = col - sumx2; i < col + sumx1; i++)
+            chess_board.arr[row][i] = 0;
     }
     // 只有竖 计算球的分数，并从数组中删除这些点
     else if (sumy1 + sumy2 >= 5)
     {
         n = sumy1 + sumy2;
         per_score = 2 * n;
-        delete_ball_num[chess_board.arr[end_row][end_col]] += n;
-        for (int i = end_row - sumy2; i < end_row + sumy1; i++)
-            chess_board.arr[i][end_col] = 0;
+        delete_ball_num[chess_board.arr[row][col]] += n;
+        for (int i = row - sumy2; i < row + sumy1; i++)
+            chess_board.arr[i][col] = 0;
     }
     // 只有横 计算球的分数，并从数组中删除这些点
     else if (sumx1 + sumx2 >= 5)
     {
         n = sumx1 + sumx2;
         per_score = 2 * n;
-        delete_ball_num[chess_board.arr[end_row][end_col]] += n;
-        for (int i = end_col - sumx2; i < end_col + sumx1; i++)
-            chess_board.arr[end_row][i] = 0;
+        delete_ball_num[chess_board.arr[row][col]] += n;
+        for (int i = col - sumx2; i < col + sumx1; i++)
+            chess_board.arr[row][i] = 0;
     }
     return per_score;
 }
@@ -309,6 +331,13 @@ void Game::CreateThreeBall()
         {
             chess_board.arr[row_pos][col_pos] = 1; // 1改成color
             count--;
+        }
+        // 系统随机产生的珠子正好能凑成了同色的5颗及以上一起排成横向、纵向或者斜向，则这几颗同向的珠子自行消除，游戏者得分
+        int per_score = IsDelete(row_pos, col_pos); // 消球
+        if (per_score != 0)
+        {
+            score += per_score;
+            std::cout << "运气真好，本次自动消球得分为：" << per_score << std::endl;
         }
     }
 }
