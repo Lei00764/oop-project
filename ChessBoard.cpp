@@ -10,6 +10,7 @@ ChessBoard::ChessBoard()
 
 void ChessBoard::PrintChessBoard()
 {
+    std::cout << "-------------------------" << std::endl;
     for (int i = 0; i < CHESSBOARD_ROWS; i++)
     {
         for (int j = 0; j < CHESSBOARD_COLS; j++)
@@ -18,4 +19,5 @@ void ChessBoard::PrintChessBoard()
         }
         std::cout << std::endl;
     }
+    std::cout << "-------------------------" << std::endl;
 }
