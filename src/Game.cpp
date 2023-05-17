@@ -9,6 +9,7 @@ const int OFFSET_Y = 200; // 棋盘左上角纵坐标  上下
 const int PIECE_SIZE = 100; // 棋盘格子大小
 
 const int RADIUS = 40; // 棋子半径
+const int SPEED = 1;   // 棋子移动速度
 
 #define RED sf::Color(255, 0, 0)
 #define YELLOW sf::Color(255, 255, 0)
@@ -146,62 +147,19 @@ void Game::PlayGame()
     SetChessPiecesPosition(); // 设置棋子的位置
     while (window.isOpen())
     {
-        DealWithEvent(window); // 处理所有事件event
+        DealWithEvent(window); // 处理用户事件
 
-        // ShowMessage();
-
-        // int is_path = BFS();
-        // if (is_path)
-        // {
-        //     // 打印路径
-        //     for (int i = 0; i < 100; i++)
-        //     {
-        //         if (path[i][0] == -1 && path[i][1] == -1)
-        //             break;
-        //         std::cout << "(" << path[i][0] << ", " << path[i][1] << ")" << std::endl;
-        //     }
-        //     chess_board.chess_pieces_arr[end_row][end_col].color = chess_board.chess_pieces_arr[start_row][start_col].color;
-        //     chess_board.chess_pieces_arr[start_row][start_col].color = 0;
-        //     // 下一次不需要选择start_row, start_col
-        //     start_row = end_row;
-        //     start_col = end_col;
-        // }
-        // else
-        // {
-        //     std::cout << "无法从"
-        //               << "(" << start_row << ", " << start_col << ")"
-        //               << "到达"
-        //               << "(" << end_row << ", " << end_col << ")" << std::endl;
-        // }
-
-        // int per_score = IsDelete(end_row, end_col); // 如果有5个及以上的话，会更改arr的值
-        // if (per_score != 0)                         // 说明本次移动完成了消球
-        // {
-        //     start_row = -1;
-        //     start_col = -1;
-        //     end_row = -1;
-        //     end_col = -1;
-        //     score += per_score;
-        //     std::cout << "本次移动消球" << per_score / 2 << "个" << std::endl;
-        // }
-        // else
-        // {
-        //     std::cout << "无法消除，将随机生成 3 个球" << std::endl;
-        //     CreateThreeBall(); // 只有当没有消球时，才会生成新的球
-        // }
-        // // 打印棋盘
-        // chess_board.PrintChessBoard();
-        // int sum = chess_board.GerRemainPieces(); // 棋盘中剩余棋子的数量
-        // if (sum == 0)                            // 棋盘中没有棋子了
-        // {
-        //     std::cout << "胜利！！！" << std::endl;
-        //     break; // 游戏结束
-        // }
-        // else if (sum + 3 > CHESSBOARD_COLS * CHESSBOARD_ROWS)
-        // {
-        //     std::cout << "失败！！！" << std::endl;
-        //     break; // 游戏结束
-        // }
+        int sum = chess_board.GerRemainPieces(); // 棋盘中剩余棋子的数量
+        if (sum == 0)                            // 棋盘中没有棋子了
+        {
+            std::cout << "胜利！！！" << std::endl;
+            break; // 游戏结束
+        }
+        else if (sum + 3 > CHESSBOARD_COLS * CHESSBOARD_ROWS)
+        {
+            std::cout << "失败！！！" << std::endl;
+            break; // 游戏结束
+        }
         window.clear();
         DrawChessBoardBg(window); // 绘制棋盘背景
         DrawChessPieces(window);  // 绘制棋子
@@ -335,11 +293,10 @@ void Game::DealWithEvent(sf::RenderWindow &window)
                     if (start_row != -1 && start_col != -1) //  说明之前选中过球 此时就要寻找路径了
                     {
                         std::cout << "从" << start_row << " " << start_col << "到" << end_row << " " << end_col << std::endl;
-
                         int is_path = BFS(); // 寻找路径
                         if (is_path)
                         {
-                            ChangePiecesPosition(); // 更改棋子的位置
+                            MovePiece(chess_board.chess_pieces_arr[start_row][start_col], window); // 移动棋子
                             std::cout << "移动棋子" << std::endl;
                             // 打印路径
                             for (int i = 0; i < 100; i++)
@@ -349,10 +306,28 @@ void Game::DealWithEvent(sf::RenderWindow &window)
                                 std::cout << "(" << path[i][0] << ", " << path[i][1] << ")" << std::endl;
                             }
                             // 更新棋盘
+                            chess_board.chess_pieces_arr[start_row][start_col].is_selected = false;
+                            chess_board.chess_pieces_arr[end_row][end_col].is_selected = true;
+
                             chess_board.chess_pieces_arr[end_row][end_col].color = chess_board.chess_pieces_arr[start_row][start_col].color;
                             chess_board.chess_pieces_arr[start_row][start_col].color = 0;
                             start_row = end_row;
                             start_col = end_col;
+                            int per_score = IsDelete(end_row, end_col); // 如果有5个及以上的话，会更改arr的值
+                            if (per_score != 0)                         // 说明本次移动完成了消球
+                            {
+                                start_row = -1;
+                                start_col = -1;
+                                end_row = -1;
+                                end_col = -1;
+                                score += per_score;
+                                std::cout << "本次移动消球" << per_score / 2 << "个" << std::endl;
+                            }
+                            else
+                            {
+                                std::cout << "无法消除，将随机生成 3 个球" << std::endl;
+                                CreateThreePieces(); // 只有当没有消球时，才会生成新的球
+                            }
                         }
                         else
                         {
@@ -365,8 +340,69 @@ void Game::DealWithEvent(sf::RenderWindow &window)
     }
 }
 
-void Game::ChangePiecesPosition()
+void Game::MovePiece(ChessPiece &piece, sf::RenderWindow &window)
 {
+    int w = 0; // path[0][0] path[0][1] 存的是起点的信息
+
+    while (path[w][0] != -1)
+    {
+        if (path[w + 1][0] < path[w][0] && path[w + 1][1] == path[w][1]) // 上移
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                piece.y -= SPEED * PIECE_SIZE / 5.0;
+                window.clear();
+                DrawChessBoardBg(window); // 绘制棋盘背景
+                DrawChessPieces(window);  // 绘制棋子
+                window.display();
+                // 休息1s
+                sf::sleep(sf::milliseconds(100));
+            }
+        }
+        else if (path[w + 1][0] == path[w][0] && path[w + 1][1] > path[w][1]) // 右移
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                piece.x += SPEED * PIECE_SIZE / 5.0;
+                window.clear();
+                DrawChessBoardBg(window); // 绘制棋盘背景
+                DrawChessPieces(window);  // 绘制棋子
+                window.display();
+                // 休息1s
+                sf::sleep(sf::milliseconds(100));
+            }
+        }
+
+        else if (path[w + 1][0] > path[w][0] && path[w + 1][1] == path[w][1]) // 下移
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                piece.y += SPEED * PIECE_SIZE / 5.0;
+                window.clear();
+                DrawChessBoardBg(window); // 绘制棋盘背景
+                DrawChessPieces(window);  // 绘制棋子
+                window.display();
+                // 休息1s
+                sf::sleep(sf::milliseconds(100));
+            }
+        }
+        else if (path[w + 1][0] == path[w][0] && path[w + 1][1] < path[w][1]) // 左移
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                piece.x -= SPEED * PIECE_SIZE / 5.0;
+                window.clear();
+                DrawChessBoardBg(window); // 绘制棋盘背景
+                DrawChessPieces(window);  // 绘制棋子
+                window.display();
+                // 休息1s
+                sf::sleep(sf::milliseconds(100));
+            }
+        }
+
+        w++;
+    }
+    std::cout << "移动完成" << std::endl;
 }
 
 void Game::ShowMessage()
@@ -478,10 +514,10 @@ int Game::IsDelete(int row, int col)
 }
 
 /**
- * @brief 若移动珠子没能消球，则将随机产生 3 个球，作为惩罚
+ * @brief 若移动珠子没能消球，则将随机产生 3 个棋子，作为惩罚
  *
  */
-void Game::CreateThreeBall()
+void Game::CreateThreePieces()
 {
     int count = 3;
     while (count > 0)
