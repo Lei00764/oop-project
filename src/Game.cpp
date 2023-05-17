@@ -382,7 +382,6 @@ void Game::MovePiece(ChessPiece &piece, sf::RenderWindow &window)
                 DrawChessBoardBg(window); // 绘制棋盘背景
                 DrawChessPieces(window);  // 绘制棋子
                 window.display();
-                // 休息1s
                 sf::sleep(sf::milliseconds(100));
             }
         }
@@ -399,7 +398,6 @@ void Game::MovePiece(ChessPiece &piece, sf::RenderWindow &window)
                 sf::sleep(sf::milliseconds(100));
             }
         }
-
         w++;
     }
     std::cout << "移动完成" << std::endl;
