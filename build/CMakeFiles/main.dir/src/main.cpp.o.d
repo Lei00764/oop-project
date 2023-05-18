@@ -496,4 +496,6 @@ CMakeFiles/main.dir/src/main.cpp.o: \
   /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Graphics/Text.hpp \
   /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Graphics/VertexBuffer.hpp \
   /Users/lei/Desktop/oop-project/src/Game.h \
-  /Users/lei/Desktop/oop-project/src/ChessBoard.h
+  /Users/lei/Desktop/oop-project/src/ChessBoard.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/queue \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque
