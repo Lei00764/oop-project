@@ -16,7 +16,7 @@ sf::Text init_text(const std::wstring &s, const sf::Font &font)
     text.setString(s);                   // 设置字符串
     text.setFont(font);                  // 设置字体
     text.setCharacterSize(36);           // 文字大小
-    text.setFillColor(sf::Color::White); // 颜色
+    text.setFillColor(sf::Color::Black); // 颜色
     text.setStyle(sf::Text::Bold);
     // 属性
     return text;
@@ -34,8 +34,8 @@ sf::Text init_text(const std::string &s, const sf::Font &font)
     sf::Text text;
     text.setString(s);                   // 设置字符串
     text.setFont(font);                  // 设置字体
-    text.setCharacterSize(36);           // 文字大小
-    text.setFillColor(sf::Color::White); // 颜色
+    text.setCharacterSize(24);           // 文字大小
+    text.setFillColor(sf::Color::Black); // 颜色
     text.setStyle(sf::Text::Bold);
     // 属性
     return text;
@@ -502,6 +502,15 @@ void Game::DrawChessBoardBg(sf::RenderWindow &window)
     background_sprite.setTexture(background_texture);
     window.draw(background_sprite);
 
+    // 加载系统信息背景图片
+    sf::Texture message_bg_texture;
+    if (!message_bg_texture.loadFromFile("../assets/message_bg.png"))
+        return;
+    sf::Sprite message_bg_sprite;
+    message_bg_sprite.setTexture(message_bg_texture);
+    message_bg_sprite.setPosition(550, 60);
+    window.draw(message_bg_sprite);
+
     // 绘制 9x9 正方形
     for (int i = 0; i < CHESSBOARD_ROWS; i++)
     {
@@ -648,85 +657,45 @@ void Game::DrawMessage(sf::RenderWindow &window, sf::Font font)
                 ball_color_num[6]++;
         }
     }
-    // 拼接 "总得分"和score
 
     sf::Text text1 = init_text(L"总得分：", font);
-    text1.setPosition(1110, 300);
+    text1.setPosition(650, 10);
     sf::Text text2 = init_text(std::to_string(score), font);
-    text2.setPosition(1250, 300);
+    text2.setPosition(650 + 150, 10);
     window.draw(text1);
     window.draw(text2);
 
-    // 球的颜色
+    // 当前剩余球的数量 + 百分比
     for (int i = 0; i < 7; i++)
     {
-        if (i == 0)
-        {
-            sf::Text text = init_text(L"空", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 1)
-        {
-            sf::Text text = init_text(L"红", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 2)
-        {
-            sf::Text text = init_text(L"黄", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 3)
-        {
-            sf::Text text = init_text(L"蓝", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 4)
-        {
-            sf::Text text = init_text(L"绿", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 5)
-        {
-            sf::Text text = init_text(L"橙", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-        else if (i == 6)
-        {
-            sf::Text text = init_text(L"紫", font);
-            text.setPosition(1010, 400 + i * 50);
-            window.draw(text);
-        }
-    }
+        sf::Text text1 = init_text(std::to_string(ball_color_num[i]), font);
+        if (ball_color_num[i] < 10)
+            text1.setPosition(MESSAGE_X + 16, MESSAGE_Y + i * 60);
+        else
+            text1.setPosition(MESSAGE_X, MESSAGE_Y + i * 60);
+        window.draw(text1);
 
-    // 当前剩余球的数量
-    for (int i = 0; i < 7; i++)
-    {
-        sf::Text text = init_text(std::to_string(ball_color_num[i]), font);
-        text.setPosition(1110, 400 + i * 50);
-        window.draw(text);
+        int num1 = ball_color_num[i] * 100 / CHESSBOARD_ROWS / CHESSBOARD_COLS;         // 整数部分
+        int num2 = ball_color_num[i] * 10000 / CHESSBOARD_ROWS / CHESSBOARD_COLS % 100; // 小数部分
+
+        sf::Text text2;
+        if (num2 < 10)
+            text2 = init_text(std::to_string(num1) + "." + std::to_string(num2) + "0%", font); // 末尾补零
+        else
+            text2 = init_text(std::to_string(num1) + "." + std::to_string(num2) + "%", font);
+
+        if (num1 < 10) // 整数部分只有个位数
+            text2.setPosition(MESSAGE_X + 50 + 16, MESSAGE_Y + i * 60);
+        else
+            text2.setPosition(MESSAGE_X + 50, MESSAGE_Y + i * 60);
+        window.draw(text2);
     }
 
     // 消去的球的数量
     for (int i = 0; i < 7; i++)
     {
         sf::Text text = init_text(std::to_string(delete_ball_num[i]), font);
-        text.setPosition(1250, 400 + i * 50);
-        window.draw(text);
-    }
-    // 百分比
-    for (int i = 0; i < 7; i++)
-    {
-        int num1 = ball_color_num[i] * 100 / CHESSBOARD_ROWS / CHESSBOARD_COLS;         // 整数部分
-        int num2 = ball_color_num[i] * 10000 / CHESSBOARD_ROWS / CHESSBOARD_COLS % 100; // 小数部分
-        sf::Text text = init_text(std::to_string(num1) + "." + std::to_string(num2) + "%", font);
-        text.setPosition(1350, 400 + i * 50);
-
+        text.setPosition(MESSAGE_X + 200, MESSAGE_Y + i * 60);
         window.draw(text);
     }
 }

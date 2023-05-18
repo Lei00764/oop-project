@@ -7,13 +7,16 @@
 #include <iostream>
 #include <queue>
 
-// 偏移量
-const int OFFSET_X = 100; // 棋盘左上角横坐标
-const int OFFSET_Y = 200; // 棋盘左上角纵坐标  上下
+// 棋盘位置偏移量
+const int OFFSET_X = 50; // 棋盘左上角横坐标
+const int OFFSET_Y = 80; // 棋盘左上角纵坐标  上下
+// 结果信息显示偏移量
+const int MESSAGE_X = 670;
+const int MESSAGE_Y = 170;
 
-const int PIECE_SIZE = 100; // 棋盘格子大小
+const int PIECE_SIZE = 50; // 棋盘格子大小
 
-const int RADIUS = 40; // 棋子半径
+const int RADIUS = 20; // 棋子半径
 const int SPEED = 1;   // 棋子移动速度
 
 #define RED sf::Color(255, 0, 0)
