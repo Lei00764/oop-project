@@ -1,22 +1,59 @@
+#include <iostream>
+#include <cstring>
+#include <string>
 #include "Game.h"
 
-#include <iostream>
+/**
+ * @brief 初始化文本，中文 宽字符
+ *
+ * @param s
+ * @param font
+ * @return sf::Text
+ */
+sf::Text init_text(const std::wstring &s, const sf::Font &font)
+{
+    sf::Text text;
+    text.setString(s);                   // 设置字符串
+    text.setFont(font);                  // 设置字体
+    text.setCharacterSize(36);           // 文字大小
+    text.setFillColor(sf::Color::White); // 颜色
+    text.setStyle(sf::Text::Bold);
+    // 属性
+    return text;
+}
 
-// 偏移量
-const int OFFSET_X = 100; // 棋盘左上角横坐标
-const int OFFSET_Y = 200; // 棋盘左上角纵坐标  上下
+/**
+ * @brief 英文或数字
+ *
+ * @param s
+ * @param font
+ * @return sf::Text
+ */
+sf::Text init_text(const std::string &s, const sf::Font &font)
+{
+    sf::Text text;
+    text.setString(s);                   // 设置字符串
+    text.setFont(font);                  // 设置字体
+    text.setCharacterSize(36);           // 文字大小
+    text.setFillColor(sf::Color::White); // 颜色
+    text.setStyle(sf::Text::Bold);
+    // 属性
+    return text;
+}
 
-const int PIECE_SIZE = 100; // 棋盘格子大小
-
-const int RADIUS = 40; // 棋子半径
-const int SPEED = 1;   // 棋子移动速度
-
-#define RED sf::Color(255, 0, 0)
-#define YELLOW sf::Color(255, 255, 0)
-#define BLUE sf::Color(0, 0, 255)
-#define GREEN sf::Color(0, 255, 0)
-#define PURPLE sf::Color(128, 0, 128)
-#define ORANGE sf::Color(255, 165, 0)
+/**
+ * @brief 初始化字体
+ *
+ * @param s
+ * @return sf::Font
+ */
+sf::Font init_font(const std::string &s)
+{
+    sf::Font font;
+    if (font.loadFromFile(s))
+        std::cout << "font success\n";
+    return font;
+}
 
 /**
  * @brief 构造函数
@@ -33,9 +70,18 @@ Game::Game() : start_row(-1), start_col(-1), end_row(-1), end_col(-1), score(0),
  */
 void Game::PlayGame()
 {
-    sf::RenderWindow window(sf::VideoMode(1500, 1500), L"五子连珠");
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    sf::RenderWindow window(sf::VideoMode(1000, 600), L"五子连珠", sf::Style::Default, settings);
+
     InitChessBoard();         // 随机生成 7 个棋子
     SetChessPiecesPosition(); // 设置棋子的位置
+
+    // 加载字体
+    sf::Font font = init_font("../assets/font/LXGWWenKai-Regular.ttf");
 
     while (window.isOpen())
     {
@@ -45,8 +91,8 @@ void Game::PlayGame()
         // 更新
         if (click_twice && !is_moving) // 选中起点和终点，且当前棋子没有移动 -> 寻找路径
         {
-            SetChessPiecesPosition(); // 设置棋子的位置
-            BFS();                    // 寻找路径
+
+            BFS(); // 寻找路径
 
             if (is_path)          // 有路径
                 is_moving = true; // 开始移动
@@ -56,8 +102,9 @@ void Game::PlayGame()
             MovePiece(window); // 绘制棋子移动的动画
 
         window.clear();
-        DrawChessBoardBg(window); // 绘制棋盘背景
-        DrawChessPieces(window);  // 绘制棋子
+        DrawChessBoardBg(window);  // 绘制棋盘背景
+        DrawChessPieces(window);   // 绘制棋子
+        DrawMessage(window, font); // 绘制信息
         window.display();
     }
 }
@@ -111,37 +158,6 @@ void Game::InputStartEnd()
     std::cin >> start_row >> start_col;
     std::cout << "请输入终点坐标: ";
     std::cin >> end_row >> end_col;
-}
-
-void Game::ShowMessage()
-{
-    // 总得分
-    std::cout << "总得分：" << score << std::endl;
-    int ball_color_num[7] = {0}; // 棋盘上每种颜色的球的数量
-    for (int i = 0; i < CHESSBOARD_ROWS; i++)
-    {
-        for (int j = 0; j < CHESSBOARD_COLS; j++)
-        {
-            if (chess_board.chess_pieces_arr[i][j].color == 0)
-                ball_color_num[0]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 1)
-                ball_color_num[1]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 2)
-                ball_color_num[2]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 3)
-                ball_color_num[3]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 4)
-                ball_color_num[4]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 5)
-                ball_color_num[5]++;
-            else if (chess_board.chess_pieces_arr[i][j].color == 6)
-                ball_color_num[6]++;
-        }
-    }
-
-    std::cout << "棋盘上剩余空位置有：" << ball_color_num[0] << "个" << std::endl;
-    std::cout << "棋盘上剩余编号为1的球有：" << ball_color_num[1] << "个" << std::endl;
-    std::cout << "消去编号为1的球有：" << delete_ball_num[1] << "个" << std::endl;
 }
 
 /**
@@ -353,7 +369,7 @@ void Game::CreateThreePieces()
 }
 
 /**
- * @brief 更新棋盘，消除棋子，生成新的棋子
+ * @brief 更新棋盘，交换起点和终点棋子
  */
 void Game::UpdateChessBoard()
 {
@@ -424,6 +440,8 @@ void Game::DealWithEvent(sf::RenderWindow &window)
 
         if (event.type == sf::Event::MouseButtonPressed) // 鼠标点击
         {
+            if (is_moving) // 在移动时，不在接受鼠标点击事件
+                continue;
             if (event.mouseButton.button == sf::Mouse::Right)
             {
                 std::cout << "点击鼠标右键，应该关闭游戏" << std::endl;
@@ -476,6 +494,14 @@ void Game::DealWithEvent(sf::RenderWindow &window)
  */
 void Game::DrawChessBoardBg(sf::RenderWindow &window)
 {
+    // 加载背景图片
+    sf::Texture background_texture;
+    if (!background_texture.loadFromFile("../assets/chessboard_bg.png"))
+        return;
+    sf::Sprite background_sprite;
+    background_sprite.setTexture(background_texture);
+    window.draw(background_sprite);
+
     // 绘制 9x9 正方形
     for (int i = 0; i < CHESSBOARD_ROWS; i++)
     {
@@ -518,19 +544,19 @@ void Game::DrawChessPieces(sf::RenderWindow &window)
                 piece.setFillColor(RED);
                 break;
             case 2:
-                piece.setFillColor(BLUE);
-                break;
-            case 3:
-                piece.setFillColor(GREEN);
-                break;
-            case 4:
                 piece.setFillColor(YELLOW);
                 break;
+            case 3:
+                piece.setFillColor(BLUE);
+                break;
+            case 4:
+                piece.setFillColor(GREEN);
+                break;
             case 5:
-                piece.setFillColor(PURPLE);
+                piece.setFillColor(ORANGE);
                 break;
             case 6:
-                piece.setFillColor(ORANGE);
+                piece.setFillColor(PURPLE);
                 break;
             default:
                 break;
@@ -548,14 +574,16 @@ void Game::MovePiece(sf::RenderWindow &window)
 {
     if (path.size() == 1) // path中只有一个元素，即终点 -> 移动完成
     {
-        is_moving = false;   // 说明一次完整移动完成，设置为静止
-        click_twice = false; // 重置鼠标点击次数
-        UpdateChessBoard();  // 更新棋盘位置
-        UpdateScore();       // 更新分数，如果没有消球的话，生成新的棋子
-
+        is_moving = false;               // 说明一次完整移动完成，设置为静止
+        click_twice = false;             // 重置鼠标点击次数
+        UpdateChessBoard();              // 更新棋盘位置，更改数组中的棋子位置
+        UpdateScore();                   // 更新分数，如果没有消球的话，生成新的棋子
+        SetChessPiecesPosition();        // 设置棋子的位置
         int game_over = CheckGameOver(); // 检测游戏是否结束
         if (game_over == 1 || game_over == -1)
             std::cout << "游戏结束" << std::endl;
+        // 打印棋盘
+        chess_board.PrintChessBoard();
     }
     else // 当路径不为空，进行移动
     {
@@ -579,20 +607,126 @@ void Game::MovePiece(sf::RenderWindow &window)
 
         if (row1 > row2 && col1 == col2) // 上移
 
-            piece.y -= SPEED * PIECE_SIZE / 5.0;
+            piece.y -= PIECE_SIZE / 5.0;
 
         else if (row1 == row2 && col1 < col2) // 右移
 
-            piece.x += SPEED * PIECE_SIZE / 5.0;
+            piece.x += PIECE_SIZE / 5.0;
 
         else if (row1 < row2 && col1 == col2) // 下移
 
-            piece.y += SPEED * PIECE_SIZE / 5.0;
+            piece.y += PIECE_SIZE / 5.0;
 
         else if (row1 == row2 && col1 > col2) // 左移
 
-            piece.x -= SPEED * PIECE_SIZE / 5.0;
+            piece.x -= PIECE_SIZE / 5.0;
 
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep(sf::milliseconds(10));
+    }
+}
+
+void Game::DrawMessage(sf::RenderWindow &window, sf::Font font)
+{
+    int ball_color_num[7] = {0}; // 棋盘上每种颜色的球的数量
+    for (int i = 0; i < CHESSBOARD_ROWS; i++)
+    {
+        for (int j = 0; j < CHESSBOARD_COLS; j++)
+        {
+            if (chess_board.chess_pieces_arr[i][j].color == 0)
+                ball_color_num[0]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 1)
+                ball_color_num[1]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 2)
+                ball_color_num[2]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 3)
+                ball_color_num[3]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 4)
+                ball_color_num[4]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 5)
+                ball_color_num[5]++;
+            else if (chess_board.chess_pieces_arr[i][j].color == 6)
+                ball_color_num[6]++;
+        }
+    }
+    // 拼接 "总得分"和score
+
+    sf::Text text1 = init_text(L"总得分：", font);
+    text1.setPosition(1110, 300);
+    sf::Text text2 = init_text(std::to_string(score), font);
+    text2.setPosition(1250, 300);
+    window.draw(text1);
+    window.draw(text2);
+
+    // 球的颜色
+    for (int i = 0; i < 7; i++)
+    {
+        if (i == 0)
+        {
+            sf::Text text = init_text(L"空", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 1)
+        {
+            sf::Text text = init_text(L"红", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 2)
+        {
+            sf::Text text = init_text(L"黄", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 3)
+        {
+            sf::Text text = init_text(L"蓝", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 4)
+        {
+            sf::Text text = init_text(L"绿", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 5)
+        {
+            sf::Text text = init_text(L"橙", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+        else if (i == 6)
+        {
+            sf::Text text = init_text(L"紫", font);
+            text.setPosition(1010, 400 + i * 50);
+            window.draw(text);
+        }
+    }
+
+    // 当前剩余球的数量
+    for (int i = 0; i < 7; i++)
+    {
+        sf::Text text = init_text(std::to_string(ball_color_num[i]), font);
+        text.setPosition(1110, 400 + i * 50);
+        window.draw(text);
+    }
+
+    // 消去的球的数量
+    for (int i = 0; i < 7; i++)
+    {
+        sf::Text text = init_text(std::to_string(delete_ball_num[i]), font);
+        text.setPosition(1250, 400 + i * 50);
+        window.draw(text);
+    }
+    // 百分比
+    for (int i = 0; i < 7; i++)
+    {
+        int num1 = ball_color_num[i] * 100 / CHESSBOARD_ROWS / CHESSBOARD_COLS;         // 整数部分
+        int num2 = ball_color_num[i] * 10000 / CHESSBOARD_ROWS / CHESSBOARD_COLS % 100; // 小数部分
+        sf::Text text = init_text(std::to_string(num1) + "." + std::to_string(num2) + "%", font);
+        text.setPosition(1350, 400 + i * 50);
+
+        window.draw(text);
     }
 }

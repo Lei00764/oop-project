@@ -3,8 +3,25 @@
 
 #include "ChessBoard.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <iostream>
 #include <queue>
+
+// 偏移量
+const int OFFSET_X = 100; // 棋盘左上角横坐标
+const int OFFSET_Y = 200; // 棋盘左上角纵坐标  上下
+
+const int PIECE_SIZE = 100; // 棋盘格子大小
+
+const int RADIUS = 40; // 棋子半径
+const int SPEED = 1;   // 棋子移动速度
+
+#define RED sf::Color(255, 0, 0)
+#define YELLOW sf::Color(255, 255, 0)
+#define BLUE sf::Color(0, 0, 255)
+#define GREEN sf::Color(0, 255, 0)
+#define ORANGE sf::Color(255, 165, 0)
+#define PURPLE sf::Color(128, 0, 128)
 
 struct Point
 {
@@ -18,11 +35,11 @@ class Game
 {
 public:
     Game();
-    void PlayGame();                                // 开始游戏
-    void InitChessBoard();                          // 初始化棋盘 随机生成 7 个棋子
-    void SetChessPiecesPosition();                  // 设置棋子位置，每次移动前均要重新设置
-    void InputStartEnd();                           // 键盘输入起点和终点坐标
-    void ShowMessage();                             // 终端显示游戏信息
+    void PlayGame();               // 开始游戏
+    void InitChessBoard();         // 初始化棋盘 随机生成 7 个棋子
+    void SetChessPiecesPosition(); // 设置棋子位置，每次移动前均要重新设置
+    void InputStartEnd();          // 键盘输入起点和终点坐标
+
     void BFS();                                     // 广度优先搜索，判断是否有路径从起点到终点
     void InsertPath(int i, int j, Point pre[9][9]); // 将路径插入到path数组中，配合BFS使用
     int IsDelete(int row, int col);                 // 判断是否消球，如果有5个及以上的话，会更改arr的值
@@ -31,10 +48,11 @@ public:
     void UpdateScore();                             // 更新得分
     int CheckGameOver();                            // 检查游戏是否结束 胜利则返回1，失败则返回-1，如果继续则返回0
 
-    void DealWithEvent(sf::RenderWindow &window);    // 处理所有event事件
-    void DrawChessBoardBg(sf::RenderWindow &window); // 绘制棋盘背景
-    void DrawChessPieces(sf::RenderWindow &window);  // 绘制棋子
-    void MovePiece(sf::RenderWindow &window);        // 绘制棋子移动效果
+    void DealWithEvent(sf::RenderWindow &window);              // 处理所有event事件
+    void DrawChessBoardBg(sf::RenderWindow &window);           // 绘制棋盘背景
+    void DrawChessPieces(sf::RenderWindow &window);            // 绘制棋子
+    void MovePiece(sf::RenderWindow &window);                  // 绘制棋子移动效果
+    void DrawMessage(sf::RenderWindow &window, sf::Font font); // 显示游戏信息
 
 public:
     ChessBoard chess_board;
