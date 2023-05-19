@@ -19,6 +19,12 @@ ChessBoard::ChessBoard()
         }
         chess_pieces_arr.push_back(temp);
     }
+
+    for (int i = 0; i < 3; i++)
+    {
+        int color = rand() % 6 + 1;
+        next_three_color.push_back(color);
+    }
 }
 
 void ChessBoard::PrintChessBoard()
@@ -51,4 +57,14 @@ int ChessBoard::GerRemainPieces()
         }
     }
     return ball_num;
+}
+
+void ChessBoard::CleanChessBoard()
+{
+    for (int i = 0; i < CHESSBOARD_ROWS; i++)
+
+    {
+        for (int j = 0; j < CHESSBOARD_COLS; j++)
+            chess_pieces_arr[i][j].color = 0;
+    }
 }

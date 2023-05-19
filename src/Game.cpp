@@ -2,6 +2,7 @@
 #include <cstring>
 #include <string>
 #include "Game.h"
+#include <vector>
 
 /**
  * @brief 初始化文本，中文 宽字符
@@ -10,15 +11,14 @@
  * @param font
  * @return sf::Text
  */
-sf::Text init_text(const std::wstring &s, const sf::Font &font)
+sf::Text init_text(const std::wstring &s, const sf::Font &font, int font_size = 36)
 {
     sf::Text text;
     text.setString(s);                   // 设置字符串
     text.setFont(font);                  // 设置字体
-    text.setCharacterSize(36);           // 文字大小
+    text.setCharacterSize(font_size);    // 文字大小
     text.setFillColor(sf::Color::Black); // 颜色
-    text.setStyle(sf::Text::Bold);
-    // 属性
+    text.setStyle(sf::Text::Bold);       // 样式
     return text;
 }
 
@@ -36,8 +36,7 @@ sf::Text init_text(const std::string &s, const sf::Font &font, int font_size = 2
     text.setFont(font);                  // 设置字体
     text.setCharacterSize(font_size);    // 文字大小
     text.setFillColor(sf::Color::Black); // 颜色
-    text.setStyle(sf::Text::Bold);
-    // 属性
+    text.setStyle(sf::Text::Bold);       // 样式
     return text;
 }
 
@@ -51,7 +50,7 @@ sf::Font init_font(const std::string &s)
 {
     sf::Font font;
     if (font.loadFromFile(s))
-        std::cout << "font success\n";
+        std::cout << "font success" << std::endl;
     return font;
 }
 
@@ -59,10 +58,9 @@ sf::Font init_font(const std::string &s)
  * @brief 构造函数
  *
  */
-Game::Game() : start_row(-1), start_col(-1), end_row(-1), end_col(-1), score(0), per_score(0), is_moving(false), move_times(0), click_twice(false), is_path(false), auto_score(false)
+Game::Game()
 {
-    for (int i = 0; i < 7; i++)
-        delete_ball_num[i] = 0;
+    InitChessBoard(); // 初始化游戏
 }
 
 /**
@@ -72,13 +70,9 @@ void Game::PlayGame()
 {
     window.create(sf::VideoMode(1000, 600), L"五子连珠");
 
-    InitChessBoard();         // 随机生成 7 个棋子
     SetChessPiecesPosition(); // 设置棋子的位置
 
-    // 加载字体
-
-    font = init_font("../assets/font/LXGWWenKai-Regular.ttf");
-
+    font = init_font("../assets/font/LXGWWenKai-Regular.ttf"); // 加载字体
     while (window.isOpen())
     {
         DealWithEvent(); // 处理用户事件
@@ -92,14 +86,16 @@ void Game::PlayGame()
                 is_moving = true; // 开始移动
         }
 
-        if (is_moving)   // 棋子正在移动
-            MovePiece(); // 绘制棋子移动的动画
+        if (is_moving)       // 棋子正在移动
+            DrawMovePiece(); // 绘制棋子移动的动画，移动完成后会更新状态
 
         window.clear();
-        DrawChessBoardBg(); // 绘制棋盘背景
-        DrawChessPieces();  // 绘制棋子
-        DrawMessage();      // 绘制结果信息
-        DrawPrompt();       // 绘制提示信息
+        DrawChessBoardBg();    // 绘制棋盘背景
+        DrawChessPieces();     // 绘制棋子
+        DrawNextThreePieces(); // 绘制接下来应该出现的 3 个棋子
+        DrawMessage();         // 绘制结果信息
+        DrawScore();           // 绘制游戏总得分
+        DrawPrompt();          // 绘制提示信息
         window.display();
     }
 }
@@ -110,8 +106,24 @@ void Game::PlayGame()
  */
 void Game::InitChessBoard()
 {
-    int count = 40; // 记录生成球的数量
+    start_row = -1;
+    start_col = -1;
+    end_row = -1;
+    end_col = -1;
+    score = 0;
+    per_score = 0;
+    is_moving = false;
+    move_times = 0;
+    click_twice = false;
+    is_path = false;
+    auto_score = false;
+    for (int i = 0; i < 7; i++)
+        delete_ball_num[i] = 0;
 
+    chess_board.CleanChessBoard(); // 清空棋盘
+
+    int count = 70; // 记录生成球的数量
+    std::cout << "here" << std::endl;
     while (count > 0)
     {
         int row_pos = rand() % CHESSBOARD_ROWS;
@@ -119,10 +131,11 @@ void Game::InitChessBoard()
         int color = rand() % 6 + 1;
         if (chess_board.chess_pieces_arr[row_pos][col_pos].color == 0)
         {
-            chess_board.chess_pieces_arr[row_pos][col_pos].color = 1; // 1改成color
+            chess_board.chess_pieces_arr[row_pos][col_pos].color = color; // 1改成color
             count--;
         }
     }
+
     chess_board.PrintChessBoard();
 }
 
@@ -344,26 +357,40 @@ void Game::IsDelete(int row, int col)
  */
 void Game::CreateThreePieces()
 {
+    t_score.clear();                  // 清空 t_score
     sf::sleep(sf::milliseconds(300)); // 休息 0.3s 再生成棋子
-    int count = 3;
-    while (count > 0)
+    int count = 0;
+    while (count < 3)
     {
         int row_pos = rand() % CHESSBOARD_ROWS;
         int col_pos = rand() % CHESSBOARD_COLS;
-        int color = rand() % 6 + 1;
+
         if (chess_board.chess_pieces_arr[row_pos][col_pos].color == 0)
         {
-            chess_board.chess_pieces_arr[row_pos][col_pos].color = 1; // 1改成color
-            count--;
+            chess_board.chess_pieces_arr[row_pos][col_pos].color = chess_board.next_three_color[count];
+            count++;
+            // 系统随机产生的珠子正好能凑成了同色的5颗及以上一起排成横向、纵向或者斜向，则这几颗同向的珠子自行消除，游戏者得分
+            per_score = 0;
+            IsDelete(row_pos, col_pos); // 能否消去棋子
+            t_score.push_back(per_score);
         }
-        // 系统随机产生的珠子正好能凑成了同色的5颗及以上一起排成横向、纵向或者斜向，则这几颗同向的珠子自行消除，游戏者得分
-        IsDelete(row_pos, col_pos); // 能否消去棋子
-        if (per_score != 0)         // 能消去棋子
-        {
-            score += per_score;
-            auto_score = true; // 本次是自动得分
-            clock1.restart();  // 重置时钟计数器
-        }
+    }
+    int sum = 0;
+    for (int i = 0; i < t_score.size(); i++)
+        sum += t_score[i];
+
+    if (sum != 0) // 说明本次运气好，随机产生的棋子有自动消除
+    {
+        score += sum;      // 把加分加到总得分上
+        auto_score = true; // 本次是自动得分
+        clock1.restart();  // 重置时钟计数器
+    }
+
+    // 更新下次应该显示的棋盘
+    for (int i = 0; i < chess_board.next_three_color.size(); i++)
+    {
+        int color = rand() % 6 + 1;
+        chess_board.next_three_color[i] = color;
     }
 }
 
@@ -441,11 +468,6 @@ void Game::DealWithEvent()
         {
             if (is_moving) // 在移动时，不在接受鼠标点击事件
                 continue;
-            if (event.mouseButton.button == sf::Mouse::Right)
-            {
-                std::cout << "点击鼠标右键，应该关闭游戏" << std::endl;
-                window.close();
-            }
 
             if (event.mouseButton.button == sf::Mouse::Left) // 鼠标左键
             {
@@ -483,6 +505,19 @@ void Game::DealWithEvent()
                     else
                         click_twice = false;
                 }
+            }
+        }
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Q)
+            {
+                std::cout << "按键盘q键，关闭游戏" << std::endl;
+                window.close();
+            }
+            else if (event.key.code == sf::Keyboard::R)
+            {
+                std::cout << "按键盘r键，重新开始游戏" << std::endl;
+                InitChessBoard();
             }
         }
     }
@@ -578,7 +613,7 @@ void Game::DrawChessPieces()
 /**
  * @brief 绘制棋子移动效果
  */
-void Game::MovePiece()
+void Game::DrawMovePiece()
 {
     if (path.size() == 1) // path中只有一个元素，即终点 -> 移动完成
     {
@@ -590,20 +625,38 @@ void Game::MovePiece()
         int game_over = CheckGameOver(); // 检测游戏是否结束
         if (game_over == 1 || game_over == -1)
         {
-            // 加载图片
-            sf::Texture over_texture;
-            if (game_over == 1)
-                over_texture.loadFromFile("../assets/success.png");
-            else
-                over_texture.loadFromFile("../assets/fail.png");
-            sf::Sprite over_sprite;
-            over_sprite.setTexture(over_texture);
-            over_sprite.setPosition(200, 300);
-            window.draw(over_sprite);
-            window.display();
-            sf::sleep(sf::seconds(10));
-        }
+            while (window.isOpen())
+            {
+                DealWithEvent(); // 处理用户事件
 
+                sf::Texture over_texture;
+                if (game_over == 1)
+                    over_texture.loadFromFile("../assets/success.png"); // 加载图片
+                else
+                    over_texture.loadFromFile("../assets/fail.png");
+                sf::Sprite over_sprite;
+                over_sprite.setTexture(over_texture);
+                over_sprite.setPosition(100, 150);
+
+                // 创建一个空白矩阵
+                sf::RectangleShape rectangle(sf::Vector2f(480.f, 70.f));
+                rectangle.setFillColor(sf::Color::White);
+                rectangle.setPosition(50.f, 400.f);
+
+                std::wstring str = L"本轮游戏总得分：" + std::to_wstring(score);
+                sf::Text text = init_text(str, font, 50);
+                text.setPosition(50, 400);
+
+                window.clear();
+                DrawChessBoardBg();
+                DrawChessPieces();
+                DrawMessage();
+                window.draw(over_sprite);
+                window.draw(rectangle);
+                window.draw(text);
+                window.display();
+            }
+        }
         // 打印棋盘
         chess_board.PrintChessBoard();
     }
@@ -640,6 +693,47 @@ void Game::MovePiece()
     }
 }
 
+void Game::DrawNextThreePieces()
+{
+    // 画白色背景
+    sf::RectangleShape rectangle(sf::Vector2f(300.f, 60.f));
+    rectangle.setFillColor(sf::Color::White);
+    rectangle.setPosition(PIECES_X - 50, PIECES_Y - 10);
+    window.draw(rectangle);
+
+    // 画出下3个棋子
+    for (int i = 0; i < 3; i++)
+    {
+        sf::CircleShape piece(RADIUS); // 半径
+        int color = chess_board.next_three_color[i];
+        switch (color)
+        {
+        case 1:
+            piece.setFillColor(RED);
+            break;
+        case 2:
+            piece.setFillColor(YELLOW);
+            break;
+        case 3:
+            piece.setFillColor(BLUE);
+            break;
+        case 4:
+            piece.setFillColor(GREEN);
+            break;
+        case 5:
+            piece.setFillColor(ORANGE);
+            break;
+        case 6:
+            piece.setFillColor(PURPLE);
+            break;
+        default:
+            break;
+        }
+        piece.setPosition(PIECES_X + i * 80, PIECES_Y);
+        window.draw(piece);
+    }
+}
+
 void Game::DrawMessage()
 {
     int ball_color_num[7] = {0}; // 棋盘上每种颜色的球的数量
@@ -663,13 +757,6 @@ void Game::DrawMessage()
                 ball_color_num[6]++;
         }
     }
-
-    sf::Text text1 = init_text(L"得分：", font);
-    text1.setPosition(650, 10);
-    sf::Text text2 = init_text(std::to_string(score), font, 36);
-    text2.setPosition(650 + 120, 10);
-    window.draw(text1);
-    window.draw(text2);
 
     // 当前剩余球的数量 + 百分比
     for (int i = 0; i < 7; i++)
@@ -706,14 +793,25 @@ void Game::DrawMessage()
     }
 }
 
+void Game::DrawScore()
+{
+    std::wstring str = L"得分：" + std::to_wstring(score);
+    sf::Text text1 = init_text(str, font, 36);
+    text1.setPosition(650, 10);
+    window.draw(text1);
+}
+
 void Game::DrawPrompt()
 {
     // 若自动消除，则提示信息 显示 PROMPT_TIME，单位 s
     sf::Text text3;
     elapsed1 = clock1.getElapsedTime();
-    if (auto_score && per_score)
+    int sum = 0; // 随机消球得分
+    for (int i = 0; i < t_score.size(); i++)
+        sum += t_score[i];
+    if (auto_score && sum != 0)
     {
-        std::wstring str = L"运气真好，本次自动消球得分" + std::to_wstring(per_score);
+        std::wstring str = L"运气真好，本次自动消球得分" + std::to_wstring(sum);
         text3 = init_text(str, font);
 
         if (elapsed1.asSeconds() >= PROMPT_TIME)

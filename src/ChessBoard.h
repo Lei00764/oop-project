@@ -27,11 +27,13 @@ public:
     ChessBoard();           // 构造函数
     void PrintChessBoard(); // 打印棋盘
     int GerRemainPieces();  // 获取棋盘剩余棋子数量
+    void CleanChessBoard(); // 清空棋盘
 
     friend class Game; // 声明 Game 为友元类
 
 private:
     std::vector<std::vector<ChessPiece>> chess_pieces_arr; // 二维数组
+    std::vector<int> next_three_color;                     // 下一次显示的3个棋子的颜色
 };
 
 #endif
