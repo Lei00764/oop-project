@@ -4,6 +4,7 @@
 #include "ChessBoard.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -49,7 +50,7 @@ public:
     void PlayGame();      // 开始游戏
     void DealWithEvent(); // 处理所有event事件
 
-    void InitChessBoard();         // 初始化棋盘 随机生成 7 个棋子
+    void InitGame();               // 初始化游戏
     void SetChessPiecesPosition(); // 设置棋子位置，每次移动前均要重新设置
     void InputStartEnd();          // 键盘输入起点和终点坐标
 
@@ -59,7 +60,7 @@ public:
     void CreateThreePieces();                       // 随机生成 3 个棋子
     void UpdateChessBoard();                        // 更新棋盘，消除棋子，生成新的棋子
     void UpdateScore();                             // 更新得分
-    int CheckGameOver();                            // 检查游戏是否结束 胜利则返回1，失败则返回-1，如果继续则返回0
+    void CheckGameOver();                           // 检查游戏是否结束
 
     void DrawChessBoardBg();    // 绘制棋盘背景
     void DrawChessPieces();     // 绘制棋子
@@ -68,6 +69,7 @@ public:
     void DrawMessage();         // 显示游戏信息
     void DrawScore();           // 显示游戏得分
     void DrawPrompt();          // 显示游戏提示信息
+    void DrawGameOver();        // 显示游戏结束画面
 
 public:
     ChessBoard chess_board;
@@ -84,13 +86,16 @@ public:
     bool click_twice;         // click_twice = true 选中起点和终点
     bool is_path;             // 从起点到终点是否有路径
     bool auto_score;          // 自动的份上
+    int game_over;            // game_over = 1 胜利 game_over = -1 失败 game_over = 0 继续
     std::vector<int> t_score; // 保留 3 次随机棋子可能产生的分数
 
 private:
     sf::RenderWindow window; // 窗口
     sf::Font font;           // 字体
     sf::Clock clock1;        // 记录自动得分显示信息显示
-    sf::Time elapsed1;
+    sf::Time elapsed1;       // 配合clock使用
+    sf::SoundBuffer sound_buffer1;
+    sf::Sound sound;
 };
 
 #endif

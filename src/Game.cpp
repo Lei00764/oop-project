@@ -60,7 +60,7 @@ sf::Font init_font(const std::string &s)
  */
 Game::Game()
 {
-    InitChessBoard(); // 初始化游戏
+    InitGame(); // 初始化游戏
 }
 
 /**
@@ -96,6 +96,7 @@ void Game::PlayGame()
         DrawMessage();         // 绘制结果信息
         DrawScore();           // 绘制游戏总得分
         DrawPrompt();          // 绘制提示信息
+        DrawGameOver();        // 绘制游戏结束画面
         window.display();
     }
 }
@@ -104,7 +105,7 @@ void Game::PlayGame()
  * @brief 初始化棋盘，生成随机棋子
  *
  */
-void Game::InitChessBoard()
+void Game::InitGame()
 {
     start_row = -1;
     start_col = -1;
@@ -122,7 +123,7 @@ void Game::InitChessBoard()
 
     chess_board.CleanChessBoard(); // 清空棋盘
 
-    int count = 70; // 记录生成球的数量
+    int count = 7; // 记录生成球的数量
     std::cout << "here" << std::endl;
     while (count > 0)
     {
@@ -135,6 +136,8 @@ void Game::InitChessBoard()
             count--;
         }
     }
+
+    sound_buffer1.loadFromFile("../assets/sound/move.wav"); // 加载声音缓冲区
 
     chess_board.PrintChessBoard();
 }
@@ -434,21 +437,21 @@ void Game::UpdateScore()
  *
  * @return 胜利则返回1，失败则返回-1，如果继续则返回0
  */
-int Game::CheckGameOver()
+void Game::CheckGameOver()
 {
     int sum = chess_board.GerRemainPieces(); // 棋盘中剩余棋子的数量
     if (sum == 0)                            // 棋盘中没有棋子了
     {
         std::cout << "胜利！！！" << std::endl;
-        return 1; // 游戏结束
+        game_over = 1; // 游戏结束
     }
     else if (sum + 3 > CHESSBOARD_COLS * CHESSBOARD_ROWS)
     {
         std::cout << "失败！！！" << std::endl;
-        return -1; // 游戏结束
+        game_over = -1; // 游戏结束
     }
     else
-        return 0; // 游戏继续
+        game_over = 0; // 游戏继续
 }
 
 /**
@@ -480,6 +483,9 @@ void Game::DealWithEvent()
                     std::cout << "超出棋盘范围" << std::endl;
                     continue;
                 }
+                sound.setBuffer(sound_buffer1);
+                sound.play(); // 播放点击音乐
+
                 end_row = (y - OFFSET_Y) / PIECE_SIZE; // 当前点击的行
                 end_col = (x - OFFSET_X) / PIECE_SIZE;
                 if (chess_board.chess_pieces_arr[end_row][end_col].color != 0) // 该位置有棋子
@@ -517,7 +523,8 @@ void Game::DealWithEvent()
             else if (event.key.code == sf::Keyboard::R)
             {
                 std::cout << "按键盘r键，重新开始游戏" << std::endl;
-                InitChessBoard();
+                game_over = 0; // 游戏继续
+                InitGame();
             }
         }
     }
@@ -617,46 +624,13 @@ void Game::DrawMovePiece()
 {
     if (path.size() == 1) // path中只有一个元素，即终点 -> 移动完成
     {
-        is_moving = false;               // 说明一次完整移动完成，设置为静止
-        click_twice = false;             // 重置鼠标点击次数
-        UpdateChessBoard();              // 更新棋盘位置，更改数组中的棋子位置
-        UpdateScore();                   // 更新分数，如果没有消球的话，生成新的棋子
-        SetChessPiecesPosition();        // 设置棋子的位置
-        int game_over = CheckGameOver(); // 检测游戏是否结束
-        if (game_over == 1 || game_over == -1)
-        {
-            while (window.isOpen())
-            {
-                DealWithEvent(); // 处理用户事件
+        is_moving = false;        // 说明一次完整移动完成，设置为静止
+        click_twice = false;      // 重置鼠标点击次数
+        UpdateChessBoard();       // 更新棋盘位置，更改数组中的棋子位置
+        UpdateScore();            // 更新分数，如果没有消球的话，生成新的棋子
+        SetChessPiecesPosition(); // 设置棋子的位置
+        CheckGameOver();          // 检测游戏是否结束
 
-                sf::Texture over_texture;
-                if (game_over == 1)
-                    over_texture.loadFromFile("../assets/success.png"); // 加载图片
-                else
-                    over_texture.loadFromFile("../assets/fail.png");
-                sf::Sprite over_sprite;
-                over_sprite.setTexture(over_texture);
-                over_sprite.setPosition(100, 150);
-
-                // 创建一个空白矩阵
-                sf::RectangleShape rectangle(sf::Vector2f(480.f, 70.f));
-                rectangle.setFillColor(sf::Color::White);
-                rectangle.setPosition(50.f, 400.f);
-
-                std::wstring str = L"本轮游戏总得分：" + std::to_wstring(score);
-                sf::Text text = init_text(str, font, 50);
-                text.setPosition(50, 400);
-
-                window.clear();
-                DrawChessBoardBg();
-                DrawChessPieces();
-                DrawMessage();
-                window.draw(over_sprite);
-                window.draw(rectangle);
-                window.draw(text);
-                window.display();
-            }
-        }
         // 打印棋盘
         chess_board.PrintChessBoard();
     }
@@ -690,6 +664,38 @@ void Game::DrawMovePiece()
             piece.x -= PIECE_SIZE / 5.0;
 
         sf::sleep(sf::milliseconds(SPEED));
+    }
+}
+
+/**
+ * @brief 绘制游戏结束画面
+ *
+ */
+void Game::DrawGameOver()
+{
+    if (game_over == 1 || game_over == -1)
+    {
+        sf::Texture over_texture;
+        if (game_over == 1)
+            over_texture.loadFromFile("../assets/success.png"); // 加载图片
+        else
+            over_texture.loadFromFile("../assets/fail.png");
+        sf::Sprite over_sprite;
+        over_sprite.setTexture(over_texture);
+        over_sprite.setPosition(100, 150);
+
+        // 创建一个空白矩阵
+        sf::RectangleShape rectangle(sf::Vector2f(480.f, 70.f));
+        rectangle.setFillColor(sf::Color::White);
+        rectangle.setPosition(50.f, 400.f);
+
+        std::wstring str = L"本轮游戏总得分：" + std::to_wstring(score);
+        sf::Text text = init_text(str, font, 50);
+        text.setPosition(50, 400);
+
+        window.draw(over_sprite);
+        window.draw(rectangle);
+        window.draw(text);
     }
 }
 

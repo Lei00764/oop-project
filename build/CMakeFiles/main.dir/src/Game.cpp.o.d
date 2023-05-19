@@ -497,5 +497,23 @@ CMakeFiles/main.dir/src/Game.cpp.o: \
   /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Graphics/Sprite.hpp \
   /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Graphics/Text.hpp \
   /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Graphics/VertexBuffer.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/InputSoundFile.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/Export.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/Listener.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/Music.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundStream.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundSource.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/AlResource.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/OutputSoundFile.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/Sound.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundBuffer.hpp \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/set \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundBufferRecorder.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundRecorder.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundFileFactory.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundFileFactory.inl \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundFileReader.hpp \
+  /Users/lei/Desktop/oop-project/thirdparty/SFML/include/SFML/Audio/SoundFileWriter.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/queue \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque

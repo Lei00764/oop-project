@@ -917,6 +917,24 @@ CMakeFiles/main.dir/src/Game.cpp.o: ../src/Game.cpp \
   ../thirdparty/SFML/include/SFML/Graphics/Sprite.hpp \
   ../thirdparty/SFML/include/SFML/Graphics/Text.hpp \
   ../thirdparty/SFML/include/SFML/Graphics/VertexBuffer.hpp \
+  ../thirdparty/SFML/include/SFML/Audio.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/InputSoundFile.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Export.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Listener.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Music.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundStream.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundSource.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/AlResource.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/OutputSoundFile.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Sound.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundBuffer.hpp \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/set \
+  ../thirdparty/SFML/include/SFML/Audio/SoundBufferRecorder.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundRecorder.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.inl \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileReader.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileWriter.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/queue \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque
 
@@ -1418,11 +1436,53 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
   ../thirdparty/SFML/include/SFML/Graphics/VertexBuffer.hpp \
   ../src/Game.h \
   ../src/ChessBoard.h \
+  ../thirdparty/SFML/include/SFML/Audio.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/InputSoundFile.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Export.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Listener.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Music.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundStream.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundSource.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/AlResource.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/OutputSoundFile.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/Sound.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundBuffer.hpp \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/set \
+  ../thirdparty/SFML/include/SFML/Audio/SoundBufferRecorder.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundRecorder.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.inl \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileReader.hpp \
+  ../thirdparty/SFML/include/SFML/Audio/SoundFileWriter.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/queue \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque
 
 
 ../src/main.cpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundFileWriter.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundFileReader.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.inl:
+
+../thirdparty/SFML/include/SFML/Audio/SoundFileFactory.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundBufferRecorder.hpp:
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/set:
+
+../thirdparty/SFML/include/SFML/Audio/AlResource.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundStream.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/Music.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/Listener.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/Export.hpp:
+
+../thirdparty/SFML/include/SFML/Audio.hpp:
 
 ../thirdparty/SFML/include/SFML/Graphics/VertexBuffer.hpp:
 
@@ -1455,6 +1515,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 ../thirdparty/SFML/include/SFML/Graphics/RenderStates.hpp:
 
 ../thirdparty/SFML/include/SFML/Graphics/Drawable.hpp:
+
+../thirdparty/SFML/include/SFML/Audio/SoundBuffer.hpp:
 
 ../thirdparty/SFML/include/SFML/Graphics/Shape.hpp:
 
@@ -1543,6 +1605,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_in_addr_t.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_gid_t.h:
+
+../thirdparty/SFML/include/SFML/Audio/InputSoundFile.hpp:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_blksize_t.h:
 
@@ -1798,6 +1862,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__iterator/reverse_access.h:
 
+../thirdparty/SFML/include/SFML/Audio/Sound.hpp:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__iterator/prev.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/machine/limits.h:
@@ -1901,6 +1967,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/limits.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/errno.h:
+
+../thirdparty/SFML/include/SFML/Audio/OutputSoundFile.hpp:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__algorithm/copy.h:
 
@@ -2021,6 +2089,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/appleapiopts.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__iterator/common_iterator.h:
+
+../thirdparty/SFML/include/SFML/Audio/SoundSource.hpp:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/_xlocale.h:
 
@@ -2397,6 +2467,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__algorithm/iter_swap.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/i386/endian.h:
+
+../thirdparty/SFML/include/SFML/Audio/SoundRecorder.hpp:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__memory/raw_storage_iterator.h:
 
