@@ -47,16 +47,16 @@ void ChessBoard::PrintChessBoard()
  */
 int ChessBoard::GerRemainPieces()
 {
-    int ball_num = 0;
+    int piece_num = 0;
     for (int i = 0; i < CHESSBOARD_ROWS; i++)
     {
         for (int j = 0; j < CHESSBOARD_COLS; j++)
         {
             if (chess_pieces_arr[i][j].color != 0)
-                ball_num++;
+                piece_num++;
         }
     }
-    return ball_num;
+    return piece_num;
 }
 
 void ChessBoard::CleanChessBoard()
@@ -65,6 +65,9 @@ void ChessBoard::CleanChessBoard()
 
     {
         for (int j = 0; j < CHESSBOARD_COLS; j++)
-            chess_pieces_arr[i][j].color = 0;
+        {
+            chess_pieces_arr[i][j].color = 0;           // 清空颜色
+            chess_pieces_arr[i][j].is_selected = false; // 取消选中
+        }
     }
 }

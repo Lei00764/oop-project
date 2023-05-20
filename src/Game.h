@@ -71,31 +71,32 @@ public:
     void DrawPrompt();          // 显示游戏提示信息
     void DrawGameOver();        // 显示游戏结束画面
 
-public:
+private:
     ChessBoard chess_board;
-    int start_row;            // 起点行坐标
-    int start_col;            // 起点列坐标
-    int end_row;              // 终点行坐标
-    int end_col;              // 终点列坐标
-    int score;                // 得分
-    int per_score;            // 单次得分
-    int delete_ball_num[7];   // 记录各种颜色球消除总数量
-    std::queue<Point> path;   // 记录从起点到终点的路径
-    int move_times;           // 移动次数
-    bool is_moving;           // is_moving = 1 正在移动，is_moving = 0 当前处于静止状态
-    bool click_twice;         // click_twice = true 选中起点和终点
-    bool is_path;             // 从起点到终点是否有路径
-    bool auto_score;          // 自动的份上
-    int game_over;            // game_over = 1 胜利 game_over = -1 失败 game_over = 0 继续
-    std::vector<int> t_score; // 保留 3 次随机棋子可能产生的分数
+    int start_row;              // 起点行坐标
+    int start_col;              // 起点列坐标
+    int end_row;                // 终点行坐标
+    int end_col;                // 终点列坐标
+    int score;                  // 得分
+    int per_score;              // 单次得分
+    int move_times;             // 移动次数
+    bool is_moving;             // is_moving = 1 正在移动，is_moving = 0 当前处于静止状态
+    bool click_twice;           // click_twice = true 选中起点和终点
+    bool is_path;               // 从起点到终点是否有路径
+    bool auto_score;            // 自动得分
+    int game_over;              // game_over = 1 胜利 game_over = -1 失败 game_over = 0 继续
+    int delete_ball_num[7];     // 记录各种颜色球消除总数量
+    bool game_ove_music_played; // 记录游戏结束音乐是否已经播放过
+    std::queue<Point> path;     // 记录从起点到终点的路径
+    std::vector<int> t_score;   // 保留 3 次随机棋子可能产生的分数
 
 private:
-    sf::RenderWindow window; // 窗口
-    sf::Font font;           // 字体
-    sf::Clock clock1;        // 记录自动得分显示信息显示
-    sf::Time elapsed1;       // 配合clock使用
-    sf::SoundBuffer sound_buffer1;
-    sf::Sound sound;
+    sf::RenderWindow window;       // 窗口
+    sf::Font font;                 // 字体
+    sf::Clock clock1;              // 记录自动得分显示信息显示
+    sf::Time elapsed1;             // 配合clock使用
+    sf::SoundBuffer sound_buffer1; // 音频缓冲区
+    sf::Sound sound;               // 音频源对象
 };
 
 #endif

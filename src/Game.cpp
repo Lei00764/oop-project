@@ -7,9 +7,6 @@
 /**
  * @brief 初始化文本，中文 宽字符
  *
- * @param s
- * @param font
- * @return sf::Text
  */
 sf::Text init_text(const std::wstring &s, const sf::Font &font, int font_size = 36)
 {
@@ -25,9 +22,6 @@ sf::Text init_text(const std::wstring &s, const sf::Font &font, int font_size = 
 /**
  * @brief 英文或数字
  *
- * @param s
- * @param font
- * @return sf::Text
  */
 sf::Text init_text(const std::string &s, const sf::Font &font, int font_size = 24)
 {
@@ -43,8 +37,6 @@ sf::Text init_text(const std::string &s, const sf::Font &font, int font_size = 2
 /**
  * @brief 初始化字体
  *
- * @param s
- * @return sf::Font
  */
 sf::Font init_font(const std::string &s)
 {
@@ -102,7 +94,7 @@ void Game::PlayGame()
 }
 
 /**
- * @brief 初始化棋盘，生成随机棋子
+ * @brief 初始化游戏
  *
  */
 void Game::InitGame()
@@ -118,13 +110,13 @@ void Game::InitGame()
     click_twice = false;
     is_path = false;
     auto_score = false;
+    game_ove_music_played = false;
     for (int i = 0; i < 7; i++)
         delete_ball_num[i] = 0;
 
     chess_board.CleanChessBoard(); // 清空棋盘
 
     int count = 7; // 记录生成球的数量
-    std::cout << "here" << std::endl;
     while (count > 0)
     {
         int row_pos = rand() % CHESSBOARD_ROWS;
@@ -138,7 +130,6 @@ void Game::InitGame()
     }
 
     sound_buffer1.loadFromFile("../assets/sound/move.wav"); // 加载声音缓冲区
-
     chess_board.PrintChessBoard();
 }
 
@@ -278,6 +269,7 @@ void Game::InsertPath(int i, int j, Point pre[9][9])
 /**
  * 将球移到(row, col)后判断是否能够消除
  * 消除n个球，得 2 * n 分
+ *
  */
 void Game::IsDelete(int row, int col)
 {
@@ -399,6 +391,7 @@ void Game::CreateThreePieces()
 
 /**
  * @brief 更新棋盘，交换起点和终点棋子
+ *
  */
 void Game::UpdateChessBoard()
 {
@@ -412,6 +405,7 @@ void Game::UpdateChessBoard()
 
 /**
  * @brief 更新分数
+ *
  */
 void Game::UpdateScore()
 {
@@ -532,6 +526,7 @@ void Game::DealWithEvent()
 
 /**
  * @brief 画棋盘背景
+ *
  */
 void Game::DrawChessBoardBg()
 {
@@ -570,6 +565,7 @@ void Game::DrawChessBoardBg()
 
 /**
  * @brief 画出所有棋子
+ *
  */
 void Game::DrawChessPieces()
 {
@@ -619,6 +615,7 @@ void Game::DrawChessPieces()
 
 /**
  * @brief 绘制棋子移动效果
+ *
  */
 void Game::DrawMovePiece()
 {
@@ -673,8 +670,21 @@ void Game::DrawMovePiece()
  */
 void Game::DrawGameOver()
 {
+
     if (game_over == 1 || game_over == -1)
     {
+        sf::Music music;            // 创建音乐对象
+        if (!game_ove_music_played) // 如果音乐还没有播放过
+        {
+            if (game_over == 1)
+                music.openFromFile("../assets/sound/success.wav"); // 加载胜利音乐
+            else
+                music.openFromFile("../assets/sound/fail.wav"); // 加载失败音乐
+            music.play();                                       // 播放音乐
+
+            game_ove_music_played = true; // 将音乐播放标志设置为true
+        }
+
         sf::Texture over_texture;
         if (game_over == 1)
             over_texture.loadFromFile("../assets/success.png"); // 加载图片
@@ -696,9 +706,29 @@ void Game::DrawGameOver()
         window.draw(over_sprite);
         window.draw(rectangle);
         window.draw(text);
+
+        // 等待音乐播放完毕
+        while (music.getStatus() == sf::Music::Playing)
+        {
+            // 处理窗口事件
+            DealWithEvent();
+            window.clear();
+            DrawChessBoardBg();    // 绘制棋盘背景
+            DrawChessPieces();     // 绘制棋子
+            DrawNextThreePieces(); // 绘制接下来应该出现的 3 个棋子
+            DrawMessage();         // 绘制结果信息
+            DrawScore();           // 绘制游戏总得分
+            DrawPrompt();          // 绘制提示信息
+            window.display();
+        }
+        game_ove_music_played = true;
     }
 }
 
+/**
+ * @brief 绘制下3个棋子
+ *
+ */
 void Game::DrawNextThreePieces()
 {
     // 画白色背景
@@ -740,6 +770,10 @@ void Game::DrawNextThreePieces()
     }
 }
 
+/**
+ * @brief 画游戏信息
+ *
+ */
 void Game::DrawMessage()
 {
     int ball_color_num[7] = {0}; // 棋盘上每种颜色的球的数量
@@ -799,6 +833,10 @@ void Game::DrawMessage()
     }
 }
 
+/**
+ * @brief 绘制游戏总得分
+ *
+ */
 void Game::DrawScore()
 {
     std::wstring str = L"得分：" + std::to_wstring(score);
@@ -807,6 +845,10 @@ void Game::DrawScore()
     window.draw(text1);
 }
 
+/**
+ * @brief 绘制游戏提示信息
+ *
+ */
 void Game::DrawPrompt()
 {
     // 若自动消除，则提示信息 显示 PROMPT_TIME，单位 s
