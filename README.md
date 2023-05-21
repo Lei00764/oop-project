@@ -8,7 +8,7 @@
 
 - macOS Monterey 版本 12.5.1
 - GCC 11.2.0
-- GNU Make 4.3
+- cmake 3.22.2
 - SFML 2.5.1
 
 图形库：SFML (https://www.sfml-dev.org/)
@@ -17,7 +17,8 @@ SFML 是一个简单、快速、跨平台和面向对象的多媒体 API。它�
 
 ## 安装
 
-
+```
+```
 
 ## 操作
 
