@@ -3,6 +3,7 @@
 #include <vector>
 
 class Game;
+class ChessBoard;
 
 const int CHESSBOARD_ROWS = 9; // 棋盘行数
 const int CHESSBOARD_COLS = 9; // 棋盘列数
@@ -11,8 +12,10 @@ class ChessPiece
 {
 public:
     ChessPiece();
+    friend ChessBoard; // 声明 ChessBoard 为友元类
+    friend Game;
 
-public:
+private:
     int color; // 颜色
     int x;     // 棋子与棋盘的相对位置（相对于棋盘左上角）横坐标
     int y;

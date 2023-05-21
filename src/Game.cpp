@@ -165,7 +165,6 @@ void Game::InputStartEnd()
 /**
  * @brief 寻找最短路径
  *
- * @return 返回1表示有路径，返回0表示无路径
  */
 void Game::BFS()
 {
@@ -429,7 +428,6 @@ void Game::UpdateScore()
 /**
  * @brief 检测游戏是否成功
  *
- * @return 胜利则返回1，失败则返回-1，如果继续则返回0
  */
 void Game::CheckGameOver()
 {
@@ -463,7 +461,9 @@ void Game::DealWithEvent()
 
         if (event.type == sf::Event::MouseButtonPressed) // 鼠标点击
         {
-            if (is_moving) // 在移动时，不在接受鼠标点击事件
+            if (game_over == 1 || game_over == -1) // 游戏结束，不接受鼠标点击事件
+                continue;
+            if (is_moving) // 在移动时，不接受鼠标点击事件
                 continue;
 
             if (event.mouseButton.button == sf::Mouse::Left) // 鼠标左键
