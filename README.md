@@ -1,4 +1,4 @@
-## 背景
+## 简介
 
 同济大学2023年《面对对象程序设计》作业。
 
@@ -6,18 +6,26 @@
 
 ## 开发环境
 
-- macOS Monterey 版本 12.5.1
-- GCC 11.2.0
+- macOS Monterey 12.5.1
 - cmake 3.22.2
 - SFML 2.5.1
+- C++11 及以上
+- 开发工具：Visual Studio Code 1.78.2
 
 图形库：SFML (https://www.sfml-dev.org/)
 
 SFML 是一个简单、快速、跨平台和面向对象的多媒体 API。它提供对窗口、图形、音频和网络的访问。它是用 C++ 编写的，并且绑定了各种语言，例如 C、.Net、Ruby、Python。
 
-## 安装
+## 运行
 
-```
+```shell
+git clone git@github.com:Lei00764/oop-project.git
+
+mkdir build  # 创建 build 文件夹
+cd build     # 进入 build 文件夹
+cmake ..     # 使用上一层的 CMakeLists.txt 来生成 Makefile
+make         # 使用 Makefile 生成可执行文件
+./main       # 运行可执行文件
 ```
 
 ## 操作
